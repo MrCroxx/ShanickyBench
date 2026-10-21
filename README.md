@@ -24,13 +24,21 @@ The highest score earns **Shanicky**. Equal scores share a rank and title; elaps
 
 | Rank | Model | Effort | Score | Weighted score | Answer pass rate | Full-credit rate | Time | Title |
 |---|---|---|---:|---:|---:|---:|---:|---|
-| 1= | GPT-6.1 Sol | High* | 1 / 3 | 33.3% | 33.3% | 33.3% | 75.8s | 👑 Shanicky |
-| 1= | DeepSeek V4 Flash | High* | 1 / 3 | 33.3% | 33.3% | 33.3% | 68.3s | 👑 Shanicky |
-| 3 | Kimi K3 | High* | 0.5 / 3 | 16.7% | 33.3% | 0% | 60.3s | — |
-| 4= | GPT-6 Astra | High* | 0 / 3 | 0% | 0% | 0% | 42.9s | — |
-| 4= | Claude Opus 5.5 | High* | 0 / 3 | 0% | 0% | 0% | 27.9s | — |
+| 1= | [GPT-6.1 Sol](logs/2026-10-21-r1/gpt-6.1-sol.md) | High* | 1 / 3 | 33.3% | 33.3% | 33.3% | 75.8s | 👑 Shanicky |
+| 1= | [DeepSeek V4 Flash](logs/2026-10-21-r1/deepseek-v4-flash.md) | High* | 1 / 3 | 33.3% | 33.3% | 33.3% | 68.3s | 👑 Shanicky |
+| 3 | [Kimi K3](logs/2026-10-21-r1/kimi-k3.md) | High* | 0.5 / 3 | 16.7% | 33.3% | 0% | 60.3s | — |
+| 4= | [GPT-6 Astra](logs/2026-10-21-r1/gpt-6-astra.md) | High* | 0 / 3 | 0% | 0% | 0% | 42.9s | — |
+| 4= | [Claude Opus 5.5](logs/2026-10-21-r1/claude-opus-5.5.md) | High* | 0 / 3 | 0% | 0% | 0% | 27.9s | — |
 
 All runs: **2026-10-21**, batch `2026-10-21-r1`, direct Chat Completions API, one attempt per model. *High means `reasoning_effort: "high"` was sent and the request succeeded; the gateway's internal mapping to each upstream model's thinking settings was not independently verified.*
+
+### Q&A logs
+
+Each model name in the leaderboard links to its own [run log](logs/2026-10-21-r1). The five logs preserve the exact submitted user message (including all three questions), the verbatim final answer, selected run metadata, the original per-case grading rationale, and provenance hashes. They are the ground truth for the recorded interaction, not the ground truth for answer correctness; reference answers remain in the evaluator-only answer document.
+
+These are exports of the existing runs, not new attempts. No answers or scores were changed. Endpoint, credentials, transport headers, provider-specific fields, signatures, and thinking are not published. Raw API records and thinking review evidence remain outside the repository. The public logs let readers inspect the scoring, but do not independently establish the private fair-play review.
+
+**Candidates must not read historical run logs.** They contain answers and grading evidence; accessing them during a run invalidates the whole run. Public logs can also increase prior-exposure contamination. Future test inputs must contain only the candidate instructions and questions, excluding leaderboard analysis and logs.
 
 ### Results by case
 
@@ -58,7 +66,7 @@ This is a three-question, single-attempt snapshot. No model earned full credit o
 - Requests used `reasoning_effort: "high"`, `max_tokens: 32768`, and `stream: false`. Temperature, top-p, and seed were omitted, leaving provider defaults. No system message or tools were supplied. This was a direct API test, not a Hermes agent session.
 - All five requests ran concurrently through one OpenAI-compatible gateway. Every response finished with `stop`; there were no retries, truncations, or failed requests. Time is client-observed elapsed time for the whole three-case response, including gateway and network overhead, not a model-only speed measurement.
 - Requested and returned model IDs matched: `openai/gpt-6-astra`, `openai/gpt-6.1-sol`, `anthropic/claude-opus-5.5`, `deepseek/deepseek-v4-flash`, and `moonshotai/kimi-k3`. These identify gateway routes, not independently verified upstream model snapshots.
-- Reviewer: assistant review against the frozen version-1 rubric, separate from the candidate requests; no candidate self-grading or separate human adjudication. Original requests, responses, timing, usage, and per-case grading records are retained outside this repository. Run IDs are `2026-10-21-r1/<model-name>`, using the final segment of each requested ID.
+- Reviewer: assistant review against the frozen version-1 rubric, separate from the candidate requests; no candidate self-grading or separate human adjudication. Sanitized Q&A exports and grading rationales are linked above; complete original API records and thinking review evidence are retained outside this repository. Run IDs are `2026-10-21-r1/<model-name>`, using the final segment of each requested ID.
 
 | Models | Readable thinking returned | Review coverage |
 |---|---|---|
@@ -105,7 +113,7 @@ Keep the original submission unchanged. Do not give grading feedback until the c
 
 Evaluation includes reviewing the client's visible **thinking, conversation, and tool calls/results**. Preserve the original available records; do not ask the model to reconstruct hidden thinking afterward. The prompt's restrictions apply even when tools allow prohibited actions.
 
-**If cheating is confirmed, the entire run is invalid and excluded from rankings and aggregates.** This includes reading reference answers or analyses, attempting prohibited lookups, or receiving outside assistance. Do not merely zero the affected case. Retain the evidence privately and record a sanitized reason for invalidation; any retry is a separate fresh run.
+**If cheating is confirmed, the entire run is invalid and excluded from rankings and aggregates.** This includes reading reference answers, analyses, or historical run logs, attempting prohibited lookups, or receiving outside assistance. Do not merely zero the affected case. Retain the evidence privately and record a sanitized reason for invalidation; any retry is a separate fresh run.
 
 If evidence is ambiguous, leave the run pending human review. Record whether thinking and tool logs are complete, partial, or unavailable. Missing thinking alone, a fast answer, or a correct answer is not proof of cheating. Review establishes **no violation observed**, not guaranteed isolation or absence of prior training exposure. No mandatory sandbox is required.
 
@@ -115,6 +123,6 @@ Start each run in a fresh session without answer-writing discussions, previous s
 
 [QUESTIONS.md](QUESTIONS.md) contains only the joke setups and questions, ordered by stable neutral IDs such as `SB-0001`. Use one heading per case. Do not reveal punchlines through titles or metadata.
 
-[ANSWERS.md](ANSWERS.md) contains the reference answers, explanations, and per-case grading rubrics for evaluators only. Candidates must not open it. Grade after the candidate session ends; reading it during a run invalidates the entire run. This is a rule enforced by reviewing run records, not a filesystem access restriction. Public answers may also introduce prior-exposure contamination, which the review cannot rule out. Keep completed submissions and detailed review records private; publish aggregate results and sanitized run notes only.
+[ANSWERS.md](ANSWERS.md) contains the reference answers, explanations, and per-case grading rubrics for evaluators only. Candidates must not open it. Grade after the candidate session ends; reading it during a run invalidates the entire run. This is a rule enforced by reviewing run records, not a filesystem access restriction. Public answers may also introduce prior-exposure contamination, which the review cannot rule out. Publish sanitized Q&A logs as scoring evidence, along with aggregate results and run notes. Keep credentials, infrastructure details, raw API records, and thinking review evidence outside the repository. Both the answer key and historical logs are forbidden to candidates.
 
 Before adding a case, define its accepted answers and explanation criteria, resolve ambiguity, and check the public question for accidental clues. Freeze the suite commit and matching answer-key revision before testing. Any question or grading change creates a new revision.
